@@ -45,6 +45,7 @@ public class UI extends javax.swing.JFrame {
         jTable2 = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -78,10 +79,11 @@ public class UI extends javax.swing.JFrame {
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2"
+                "Codigo", "Nombre", "Nota Media"
             }
         ));
         jScrollPane2.setViewportView(jTable2);
@@ -100,6 +102,13 @@ public class UI extends javax.swing.JFrame {
             }
         });
 
+        jButton7.setText("Actualizar");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,38 +116,42 @@ public class UI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap()
+                        .addComponent(jButton7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton4))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addComponent(jButton1)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(26, 26, 26)
-                        .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                        .addComponent(jButton6)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton5)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(17, 17, 17))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(16, 16, 16)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton5)
-                    .addComponent(jButton6))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4)
-                .addContainerGap(18, Short.MAX_VALUE))
+                    .addComponent(jButton4)
+                    .addComponent(jButton7))
+                .addContainerGap())
         );
 
         pack();
@@ -150,38 +163,39 @@ public class UI extends javax.swing.JFrame {
             if(connect!=null){
                 JOptionPane.showMessageDialog(null, "Conexion exitosa");
             }
+            refreshTabla();
         }catch (Exception e){
             JOptionPane.showMessageDialog(null, e.getMessage().toString());
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        model.setRowCount(0);
+        int codigo;
         ResultSet resultado = null;
-        
+
+        codigo = Integer.parseInt(JOptionPane.showInputDialog("Introduzca el código del item que quieras ver:"));
         try{
-            PreparedStatement st = connect.prepareStatement("select datosNum,datosString from tabla1");
+            PreparedStatement st = connect.prepareStatement("select * from alumnos where codigo = '"+codigo+"'");
             resultado = st.executeQuery();
-            
-            while(resultado.next()){
-                model.addRow(new Object[]{resultado.getInt("datosNum"),resultado.getString("datosString")});
-            }
-            
+            JOptionPane.showMessageDialog(null, "Codigo:" + resultado.getInt("codigo") + " Nombre:" + resultado.getString("nombre") + " Nota media:" + resultado.getInt("nota") );
+            refreshTabla();
         }catch(Exception e){
             JOptionPane.showMessageDialog(null, e.getMessage().toString());
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        int numValue;
-        String textValue;
+        int codigo;
+        String nombre;
+        int nota;
 
-        numValue = Integer.parseInt(JOptionPane.showInputDialog("Introduzca dato numerico entero"));
-        textValue = JOptionPane.showInputDialog("Introduzca texto");
+        codigo = Integer.parseInt(JOptionPane.showInputDialog("Introduzca un nuevo codigo:"));
+        nombre = JOptionPane.showInputDialog("Introduzca el nombre del alumno:");
+        nota = Integer.parseInt(JOptionPane.showInputDialog("Introduzca la nota media del alumno:"));
         try{
-            PreparedStatement st = connect.prepareStatement("insert into tabla1 values('"+numValue+"','"+textValue+"')");
+            PreparedStatement st = connect.prepareStatement("insert into alumnos values('"+codigo+"','"+nombre+"','"+nota+"')");
             st.execute();
-            JOptionPane.showMessageDialog(null, "Valores insertados");
+            JOptionPane.showMessageDialog(null, "Valores insertados!");
             refreshTabla();
         }catch(Exception e){
             JOptionPane.showMessageDialog(null, e.getMessage().toString());
@@ -198,11 +212,11 @@ public class UI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        int numValue;
+        int codigo;
 
-        numValue = Integer.parseInt(JOptionPane.showInputDialog("Introduzca el número de lo que quiera eliminar"));
+        codigo = Integer.parseInt(JOptionPane.showInputDialog("Introduzca el número de lo que quiera eliminar"));
         try{
-            PreparedStatement st = connect.prepareStatement("delete from tabla1 where datosNum = '"+numValue+"'");
+            PreparedStatement st = connect.prepareStatement("delete from alumnos where codigo = '"+codigo+"'");
             st.execute();
             JOptionPane.showMessageDialog(null, "Valores borrados");
             refreshTabla();
@@ -212,14 +226,16 @@ public class UI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        int numValue;
-        String textValue;
+        int codigo;
+        String nombre;
+        int nota;
 
-        numValue = Integer.parseInt(JOptionPane.showInputDialog("Introduzca el número de lo que quiera modificar"));
-        textValue = JOptionPane.showInputDialog("Introduzca el nuevo valor de texto");
+        codigo = Integer.parseInt(JOptionPane.showInputDialog("Introduzca el número de lo que quiera modificar"));
+        nombre = JOptionPane.showInputDialog("Introduzca el nuevo valor de texto");
+        nota = Integer.parseInt(JOptionPane.showInputDialog("Introduzca la nota media del alumno"));
         
         try{
-            PreparedStatement st = connect.prepareStatement("update tabla1 set datosString = '"+textValue+"' where datosNum = '"+numValue+"'");
+            PreparedStatement st = connect.prepareStatement("update alumnos set nombre = '"+nombre+"', nota = '"+nota+"' where codigo = '"+codigo+"'");
             st.execute();
             JOptionPane.showMessageDialog(null, "Valores modificados");
             refreshTabla();
@@ -227,6 +243,10 @@ public class UI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.getMessage().toString());
         }
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        refreshTabla();
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -268,11 +288,11 @@ public class UI extends javax.swing.JFrame {
         ResultSet resultado = null;
 
         try{
-            PreparedStatement st = connect.prepareStatement("select datosNum,datosString from tabla1");
+            PreparedStatement st = connect.prepareStatement("select codigo,nombre,nota from alumnos");
             resultado = st.executeQuery();
 
             while(resultado.next()){
-                model.addRow(new Object[]{resultado.getInt("datosNum"),resultado.getString("datosString")});
+                model.addRow(new Object[]{resultado.getInt("codigo"),resultado.getString("nombre"),resultado.getInt("nota")});
             }
 
         }catch(Exception e){
@@ -287,6 +307,7 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable2;
