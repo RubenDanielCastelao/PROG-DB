@@ -21,17 +21,19 @@ import javax.swing.JOptionPane;
  */
 public class UI extends javax.swing.JFrame {
 
+    Metodos bd;
+
     /**
      * Creates new form UI
      */
     public UI() {
         initComponents();
         model=(DefaultTableModel) this.jTable2.getModel();
+        bd = new Metodos(this);
     }
     DefaultTableModel model;
-    String url="jdbc:sqlite:src/main/java/BD/PruebaPROG.db";
-    Connection connect;
-    
+
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -56,7 +58,7 @@ public class UI extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Select");
+        jButton2.setText("Seleccionar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -124,11 +126,11 @@ public class UI extends javax.swing.JFrame {
                         .addGap(26, 26, 26)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(17, 17, 17))
@@ -158,94 +160,31 @@ public class UI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        try {
-            connect = DriverManager.getConnection(url);
-            if(connect!=null){
-                JOptionPane.showMessageDialog(null, "Conexion exitosa");
-            }
-            refreshTabla();
-        }catch (Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage().toString());
-        }
+        bd.conectarBD();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        int codigo;
-        ResultSet resultado = null;
 
-        codigo = Integer.parseInt(JOptionPane.showInputDialog("Introduzca el código del item que quieras ver:"));
-        try{
-            PreparedStatement st = connect.prepareStatement("select * from alumnos where codigo = '"+codigo+"'");
-            resultado = st.executeQuery();
-            JOptionPane.showMessageDialog(null, "Codigo:" + resultado.getInt("codigo") + " Nombre:" + resultado.getString("nombre") + " Nota media:" + resultado.getInt("nota") );
-            refreshTabla();
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage().toString());
-        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        int codigo;
-        String nombre;
-        int nota;
-
-        codigo = Integer.parseInt(JOptionPane.showInputDialog("Introduzca un nuevo codigo:"));
-        nombre = JOptionPane.showInputDialog("Introduzca el nombre del alumno:");
-        nota = Integer.parseInt(JOptionPane.showInputDialog("Introduzca la nota media del alumno:"));
-        try{
-            PreparedStatement st = connect.prepareStatement("insert into alumnos values('"+codigo+"','"+nombre+"','"+nota+"')");
-            st.execute();
-            JOptionPane.showMessageDialog(null, "Valores insertados!");
-            refreshTabla();
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage().toString());
-        }
+        bd.insertarElemento();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        try{
-            connect.close();
-            this.dispose();
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage().toString());
-        }
+        bd.cerrarBD();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        int codigo;
-
-        codigo = Integer.parseInt(JOptionPane.showInputDialog("Introduzca el número de lo que quiera eliminar"));
-        try{
-            PreparedStatement st = connect.prepareStatement("delete from alumnos where codigo = '"+codigo+"'");
-            st.execute();
-            JOptionPane.showMessageDialog(null, "Valores borrados");
-            refreshTabla();
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage().toString());
-        }
+        bd.borrarElemento();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        int codigo;
-        String nombre;
-        int nota;
-
-        codigo = Integer.parseInt(JOptionPane.showInputDialog("Introduzca el número de lo que quiera modificar"));
-        nombre = JOptionPane.showInputDialog("Introduzca el nuevo valor de texto");
-        nota = Integer.parseInt(JOptionPane.showInputDialog("Introduzca la nota media del alumno"));
-        
-        try{
-            PreparedStatement st = connect.prepareStatement("update alumnos set nombre = '"+nombre+"', nota = '"+nota+"' where codigo = '"+codigo+"'");
-            st.execute();
-            JOptionPane.showMessageDialog(null, "Valores modificados");
-            refreshTabla();
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage().toString());
-        }
+        bd.cambiarDatos();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        refreshTabla();
+        bd.actualizarTabla();
     }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
@@ -281,23 +220,6 @@ public class UI extends javax.swing.JFrame {
                 new UI().setVisible(true);
             }
         });
-    }
-
-    public void refreshTabla(){
-        model.setRowCount(0);
-        ResultSet resultado = null;
-
-        try{
-            PreparedStatement st = connect.prepareStatement("select codigo,nombre,nota from alumnos");
-            resultado = st.executeQuery();
-
-            while(resultado.next()){
-                model.addRow(new Object[]{resultado.getInt("codigo"),resultado.getString("nombre"),resultado.getInt("nota")});
-            }
-
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage().toString());
-        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
